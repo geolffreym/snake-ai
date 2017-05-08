@@ -16,6 +16,21 @@
 	// Add static obstacles.
 	game.obstacles = staticObstacles;
 
+	/*for(var i = 0; i < 20 ; i++){
+        let snake = new Snake(Math.floor(Math.random() * game.width), Math.floor(Math.random() * game.height), {color: getRandomColor()});
+        snake.loop = ramdSnake;
+        game.addSnake(snake);
+    }
+
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++ ) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }*/
+
 	//Add the AI snake
 	var aiSnake = new Snake(Math.floor(game.width/2),Math.floor(game.height/2), {name: "AI", direction: "E", color: "#00F"});
 	aiSnake.loop = snakeAILoop;
