@@ -14,9 +14,36 @@ function snakeAILoop(game){
         return obj.indexOf(value) === index;
     }
 
-    this.getNewDirection = function() {
-        console.log(game);
-        console.log(myHead);
+    this.getAllFoods = function () {
+        let foodsX = game.food.map(function(food){ return food.x; });
+        let foodsY = game.food.map(function(food){ return food.y; });
+
+        self.allFoods.x = foodsX;
+        self.allFoods.y = foodsY;
+    };
+
+    this.getAllObstacles = function(){
+        let obstaclesX = game.obstacles.map(function(item){ return item.x; });
+        let obstaclesY = game.obstacles.map(function(item){ return item.y; });
+
+        obstaclesX.push(0);
+        obstaclesX.push(game.width);
+
+        obstaclesY.push(0);
+        obstaclesY.push(game.height);
+
+        let snakesEnemy = game.snakes.filter(function(snake){ return snake.name !== self.name; });
+
+        if (snakesEnemy.length > 0) {
+            obstaclesX.concat(snakesEnemy.map(function(snake){ return snake.body.map(function(body){ return body.x;}) }));
+        }
+        
+        self.allObstacles.x = obstaclesX.filter(uniqueArray);
+        self.allObstacles.y = obstaclesY.filter(uniqueArray);
+        
+    };
+
+    this.getRandomDirection = function() {
         var index = Math.floor(Math.random() * directions.length);
         var newDirection = directions[index];
         var isBackwards = false;
@@ -45,40 +72,7 @@ function snakeAILoop(game){
         return false;
     };
 
-    this.getAllObstacles = function(){
-        let obstaclesX = game.obstacles.map(function(item){ return item.x; });
-        let obstaclesY = game.obstacles.map(function(item){ return item.y; });
-
-        obstaclesX.push(0);
-        obstaclesX.push(game.width);
-
-        obstaclesY.push(0);
-        obstaclesY.push(game.height);
-
-        let snakesEnemy = game.snakes.filter(function(snake){ return snake.name !== self.name; });
-
-        if (snakesEnemy.length > 0) {
-            obstaclesX.concat(snakesEnemy.map(function(snake){ return snake.body.map(function(body){ return body.x;}) }));
-        }
-        
-        self.allObstacles.x = obstaclesX.filter(uniqueArray);
-        self.allObstacles.y = obstaclesY.filter(uniqueArray);
-        
-    };
-
-    this.getAllFoods = function () {
-        let foodsX = game.food.map(function(food){ return food.x; });
-        let foodsY = game.food.map(function(food){ return food.y; });
-
-        self.allFoods.x = foodsX;
-        self.allFoods.y = foodsY;
-    };
-
-    this.getNearliestFood = function() {
-
-    };
-
-    this.getRandomDirection = function() {
+    this.getNewDirection = function() {
         var index = Math.floor(Math.random() * directions.length);
         var newDirection = directions[index];
         var isBackwards = false;
@@ -140,7 +134,7 @@ function snakeAILoop(game){
         return this.getNewDirection();
     }
 
-    if(++this.memory.counter % 4 == 0){
+    /*if(++this.memory.counter % 4 == 0){
         return this.getNewDirection();
-    }
+    }*/
 }
