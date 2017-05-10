@@ -26,8 +26,8 @@ function snakeAILoop(game){
 
     if (!this.memory.middleScreen) {
         this.memory.middleScreen = {
-            x: Math.floor(game.width - 1 / 2),
-            y: Math.floor(game.height - 1 / 2)
+            x: Math.floor(game.width / 2),
+            y: Math.floor(game.height / 2)
         }
     }
 
@@ -260,9 +260,9 @@ function snakeAILoop(game){
                         // I will hint
                         if (nextObstacle && nextObstacle.x == myHead.x + 1) {
                             if (myHead.y >= self.memory.middleScreen.y ) {
-                                this.direction = "N";
-                            } else {
                                 this.direction = "S";
+                            } else {
+                                this.direction = "N";
                             }
                         }
                     }
