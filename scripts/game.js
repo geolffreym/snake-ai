@@ -39,7 +39,7 @@ function Game(width, height, canvas, cellSize){
 	}
 
 	function loop() {
-		
+
 		// Move snakes depending on the direction set in the loop function.
 		game.snakes.forEach((snake) => {
 			var newDirection = snake.loop(game);
@@ -133,6 +133,10 @@ function Game(width, height, canvas, cellSize){
 			canvas.fillRect(position.x * cellSize, position.y * cellSize, cellSize, cellSize);
 		});
 
+		if (snake.name && snake.name != "") {
+			canvas.fillText(snake.name, (snake.getHead().x-1)*cellSize, (snake.getHead().y-1)*cellSize);
+		}
+
 		canvas.fillStyle = currentStyle;
 	}
 
@@ -190,7 +194,7 @@ function Game(width, height, canvas, cellSize){
 	}
 
 	function snakeCrashedWithLimits(snakeHead) {
-		return snakeHead.x < 0 || snakeHead.x > width || snakeHead.y < 0 || snakeHead.y > height;
+		return snakeHead.x < 0 || snakeHead.x >= width || snakeHead.y < 0 || snakeHead.y >= height;
 	}
 
 	function growFood(){
