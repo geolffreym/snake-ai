@@ -18,6 +18,7 @@ function getDistanceOf2Points (x1, y1, x2, y2) {
 
 function getDirectionAvoidingObstacle (direction, obstacles, myHead, nextFood, borders) {
     var nextObstacleX, nextObstacleY;
+    var newDirection = direction;
 
     switch (direction) {
         case 'N':
@@ -26,10 +27,10 @@ function getDirectionAvoidingObstacle (direction, obstacles, myHead, nextFood, b
                 if (myHead.y != borders.y.min && myHead.y != borders.y.max) {
                     if (nextFood) {
                         if (nextFood.y <= nextObstacleY.y) {
-                            direction = "S";
+                            newDirection = "S";
                         }
                     } else {
-                        direction = "S";
+                        newDirection = "S";
                     }
                 }
 
@@ -41,10 +42,10 @@ function getDirectionAvoidingObstacle (direction, obstacles, myHead, nextFood, b
                 if (myHead.y != borders.y.min && myHead.y != borders.y.max) {
                     if (nextFood) {
                         if (nextFood.y >= nextObstacleY.y) {
-                            direction = "N"
+                            newDirection = "N"
                         }
                     } else {
-                        direction = "N";
+                        newDirection = "N";
                     }
                 }
                 
@@ -57,10 +58,10 @@ function getDirectionAvoidingObstacle (direction, obstacles, myHead, nextFood, b
                 if (myHead.x != borders.x.min && myHead.x != borders.x.max) {
                     if (nextFood) {
                         if (nextFood.x <= nextObstacleX.x) {
-                            direction = "E";
+                            newDirection = "E";
                         }
                     } else {
-                        direction = "E";
+                        newDirection = "E";
                     }
                 }
                 
@@ -72,17 +73,17 @@ function getDirectionAvoidingObstacle (direction, obstacles, myHead, nextFood, b
                 if (myHead.x != borders.x.min && myHead.x != borders.x.max) {
                     if (nextFood) {
                         if (nextFood.x >= nextObstacleX.x) {
-                            direction = "W";
+                            newDirection = "W";
                         }
                     } else {
-                        direction = "W";
+                        newDirection = "W";
                     }
                 }
             }
         break;
     }
 
-    return direction;
+    return newDirection;
 
 }
 
@@ -119,15 +120,6 @@ function snakeAILoop(game) {
             x: {min: 0, max: game.width - 1},
             y: {min: 0, max: game.height - 1}
         }
-    }
-
-    if (!this.memory.hasDiedMethod) {
-        this.died = function() {
-            this;
-            self;
-            debugger;
-        }
-        this.memory.hasDiedMethod = true;
     }
 
     this.getAllObstacles = function(){
@@ -263,9 +255,10 @@ function snakeAILoop(game) {
                         }                         
                     }
 
-                    if(this.direction != "N" && obstacles.axiX.length > 0) {
-                        this.direction = getDirectionAvoidingObstacle(this.direction, obstacles, myHead, nextFood, this.memory.borders);
-                    }
+                }
+
+                if(this.direction != "N" && obstacles.axiX.length > 0) {
+                    this.direction = getDirectionAvoidingObstacle(this.direction, obstacles, myHead, nextFood, this.memory.borders);
                 }
 
                 break;
@@ -334,13 +327,13 @@ function snakeAILoop(game) {
                             }
                         }
                     }
-
-                    if(this.direction != "E" && obstacles.axiY.length > 0) {
-                        this.direction = getDirectionAvoidingObstacle(this.direction, obstacles, myHead, nextFood, this.memory.borders);
-                    }
                     
                 }
-                break;
+
+                if(this.direction != "E" && obstacles.axiY.length > 0) {
+                    this.direction = getDirectionAvoidingObstacle(this.direction, obstacles, myHead, nextFood, this.memory.borders);
+                }
+            break;
 
             case 'S':
 
@@ -405,10 +398,10 @@ function snakeAILoop(game) {
                             }
                         }
                     }
+                }
 
-                    if(this.direction != "S" && obstacles.axiX.length > 0) {
-                        this.direction = getDirectionAvoidingObstacle(this.direction, obstacles, myHead, nextFood, this.memory.borders);
-                    }
+                if(this.direction != "S" && obstacles.axiX.length > 0) {
+                    this.direction = getDirectionAvoidingObstacle(this.direction, obstacles, myHead, nextFood, this.memory.borders);
                 }
         
                 break;
@@ -476,10 +469,10 @@ function snakeAILoop(game) {
                             }
                         }
                     }
+                }
 
-                    if(this.direction != "W" && obstacles.axiY.length > 0) {
-                        this.direction = getDirectionAvoidingObstacle(this.direction, obstacles, myHead, nextFood, this.memory.borders);
-                    }
+                if(this.direction != "W" && obstacles.axiY.length > 0) {
+                    this.direction = getDirectionAvoidingObstacle(this.direction, obstacles, myHead, nextFood, this.memory.borders);
                 }
                 break;
         }
