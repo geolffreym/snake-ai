@@ -1,14 +1,96 @@
-function snakeAILoop(game){
-    'use strict';
+//"use strict";
+
+function uniqueArray(value, index, obj) { 
+        return obj.indexOf(value) === index;
+}
+
+function sortByX(a, b) {
+    return a.x - b.x;
+}
+
+function sortByY(a, b) {
+    return a.y - b.y;
+}
+
+function getDistanceOf2Points (x1, y1, x2, y2) {
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+}
+
+function getDirectionAvoidingObstacle (direction, obstacles, myHead, nextFood, borders) {
+    var nextObstacleX, nextObstacleY;
+
+    switch (direction) {
+        case 'N':
+            nextObstacleY = obstacles.axiY.find(function (obstacle) { return obstacle.y <= myHead.y; });
+            if (nextObstacleY) {
+                if (myHead.y != borders.y.min && myHead.y != borders.y.max) {
+                    if (nextFood) {
+                        if (nextFood.y <= nextObstacleY.y) {
+                            direction = "S";
+                        }
+                    } else {
+                        direction = "S";
+                    }
+                }
+
+            }
+        break;
+        case 'S':
+            nextObstacleY = obstacles.axiY.find(function (obstacle) { return obstacle.y >= myHead.y; });
+            if (nextObstacleY) {
+                if (myHead.y != borders.y.min && myHead.y != borders.y.max) {
+                    if (nextFood) {
+                        if (nextFood.y >= nextObstacleY.y) {
+                            direction = "N"
+                        }
+                    } else {
+                        direction = "N";
+                    }
+                }
+                
+            }
+        break;
+
+        case 'W':
+            nextObstacleX = obstacles.axiX.find(function (obstacle) { return obstacle.x <= myHead.x; });
+            if (nextObstacleX) {
+                if (myHead.x != borders.x.min && myHead.x != borders.x.max) {
+                    if (nextFood) {
+                        if (nextFood.x <= nextObstacleX.x) {
+                            direction = "E";
+                        }
+                    } else {
+                        direction = "E";
+                    }
+                }
+                
+            }
+        break;
+        case 'E':
+            nextObstacleX = obstacles.axiX.find(function (obstacle) { return obstacle.x >= myHead.x; });
+            if (nextObstacleX) {
+                if (myHead.x != borders.x.min && myHead.x != borders.x.max) {
+                    if (nextFood) {
+                        if (nextFood.x >= nextObstacleX.x) {
+                            direction = "W";
+                        }
+                    } else {
+                        direction = "W";
+                    }
+                }
+            }
+        break;
+    }
+
+    return direction;
+
+}
+
+function snakeAILoop(game) {
     //Your snake code goes here, you need to return the next snake direction in this function 
     //You can use {this.memory} to persist data regarding your snake and use it in the next iteration
     const myHead = this.getHead(); 
     let self = this;
-    let directions = ['N', 'E', 'S', 'W'];
-    self.willHit = false;
-    this.allObstacles = {};
-    this.allFoods = {};
-
 
     if(!this.memory.counter){
         this.memory.counter = 0;
@@ -31,30 +113,22 @@ function snakeAILoop(game){
         }
     }
 
-
-    function uniqueArray(value, index, obj) { 
-        return obj.indexOf(value) === index;
+    
+    if (!this.memory.borders) {
+        this.memory.borders = {
+            x: {min: 0, max: game.width - 1},
+            y: {min: 0, max: game.height - 1}
+        }
     }
 
-    function sortByX(a, b) {
-        return a.x - b.x;
+    if (!this.memory.hasDiedMethod) {
+        this.died = function() {
+            this;
+            self;
+            debugger;
+        }
+        this.memory.hasDiedMethod = true;
     }
-
-    function sortByY(a, b) {
-        return a.y - b.y;
-    }
-
-    function getDistanceOf2Points (x1, y1, x2, y2) {
-        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-    }
-
-    this.getAllFoods = function () {
-        let foodsX = game.food.map(function(food){ return food.x; });
-        let foodsY = game.food.map(function(food){ return food.y; });
-
-        self.allFoods.x = foodsX;
-        self.allFoods.y = foodsY;
-    };
 
     this.getAllObstacles = function(){
         let obstaclesX = game.obstacles.map(function(item){ return item.x; });
@@ -89,8 +163,8 @@ function snakeAILoop(game){
     this.getObstaclesInTheWay = function (x, y) {
         //TODO: improve to get others snakes positions
         let obstacles = {
-            axiX: game.obstacles.filter(function(obstacle){ return obstacle.y == y; }).sort(sortByY),
-            axiY: game.obstacles.filter(function(obstacle){ return obstacle.x == x; }).sort(sortByX)
+            axiX: game.obstacles.filter(function(obstacle){ return obstacle.y == y; }).sort(sortByX),
+            axiY: game.obstacles.filter(function(obstacle){ return obstacle.x == x; }).sort(sortByY)
             
         };
 
@@ -114,57 +188,6 @@ function snakeAILoop(game){
         return obstacles;
     };
 
-    this.getNextObstaclePositionByDir = function (direction, myX, objects) {
-        let nextObstacle;
-        switch (direction) {
-            case 'N':
-                
-                break;
-
-            case 'E':
-                nextOb
-                break;
-
-            case 'S':
-        
-                break;
-
-            case 'W':
-                break;
-        }
-
-        return nextObject;
-    };
-
-    this.getRandomDirection = function() {
-        var index = Math.floor(Math.random() * directions.length);
-        var newDirection = directions[index];
-        var isBackwards = false;
-
-        switch(newDirection){
-            case 'N':
-                isBackwards = this.direction == 'S';
-                break;
-
-            case 'E':
-                isBackwards = this.direction == 'W';
-                break;
-
-            case 'S':
-                isBackwards = this.direction == 'N';
-                break;
-
-            case 'W':
-                isBackwards = this.direction == 'E';
-                break;
-        }
-
-        if (!isBackwards) {
-            return newDirection;
-        }
-        return false;
-    };
-
     this.getNewDirection = function() {
         
         var foods = self.getFoodsInTheWay(myHead.x, myHead.y);
@@ -172,14 +195,7 @@ function snakeAILoop(game){
 
         var foodFlag = foods.axiX.length > 0  ||  foods.axiY.length > 0;
         var obstacleFlag = obstacles.axiX.length > 0  ||  obstacles.axiY.length > 0;
-
-        var nextObstacle , nextFood, nextFoodX , nextFoodY;
-
-        /*let foodX = this.allFoods.x.indexOf(myHead.x);
-        let foodY = this.allFoods.y.indexOf(myHead.y);
-
-        let obstacleX = this.allObstacles.x.indexOf(myHead.x);
-        let obstacleY = this.allObstacles.y.indexOf(myHead.y);*/
+        var nextObstacleY, nextObstacleX, nextFood, nextFoodX , nextFoodY;
 
         switch(self.direction){
             case 'N':
@@ -187,27 +203,27 @@ function snakeAILoop(game){
                 // Have I obstacles front of me?
                 if (obstacleFlag) {
                     if(obstacles.axiY.length > 0) {
-                        nextObstacle = obstacles.axiY.find(function (obstacle) { return obstacle.y <= myHead.y; });
+                        nextObstacleY = obstacles.axiY.find(function (obstacle) { return obstacle.y <= myHead.y; });
+                        
                         // I will hint
-                        if (nextObstacle && nextObstacle.y == myHead.y - 1) {
+                        if (nextObstacleY && myHead.y - 1 == nextObstacleY.y) {
                             if (myHead.x >= self.memory.middleScreen.x ) {
                                 this.direction = "W";
                             } else {
                                 this.direction = "E";
                             }
                         }
-                    }
+                    } 
                 }
 
                 // I have foods in my way
                 if ( foodFlag ) {
-                    //debugger;
                     if (foods.axiX.length > 0) {
-                        nextFoodX = foods.axiX.find(function (food) { return food.y == myHead.y; });
+                        nextFoodX = foods.axiX.find(function (food) { return myHead.y == food.y; });
                     }
 
                     if (foods.axiY.length > 0) {
-                        nextFoodY = foods.axiY.find(function (food) { return food.x == myHead.x; });
+                        nextFoodY = foods.axiY.find(function (food) { return myHead.y >= food.y; });
                     }
 
                     if (nextFoodX && nextFoodY) {
@@ -233,9 +249,9 @@ function snakeAILoop(game){
                             this.direction = "W";
                         }
 
-                        if (nextObstacle) {
+                        if (nextObstacleY) {
                             var d1 = getDistanceOf2Points(myHead.x, myHead.y, nextFood.x, nextFood.y);
-                            var d2 = getDistanceOf2Points(myHead.x, myHead.y, nextObstacle.x, nextObstacle.y);
+                            var d2 = getDistanceOf2Points(myHead.x, myHead.y, nextObstacleY.x, nextObstacleY.y);
 
                             if (d2 < d1) {
                                 if (myHead.x >= self.memory.middleScreen.x ) {
@@ -244,7 +260,11 @@ function snakeAILoop(game){
                                     this.direction = "E";
                                 }
                             }
-                        }
+                        }                         
+                    }
+
+                    if(this.direction != "N" && obstacles.axiX.length > 0) {
+                        this.direction = getDirectionAvoidingObstacle(this.direction, obstacles, myHead, nextFood, this.memory.borders);
                     }
                 }
 
@@ -254,15 +274,14 @@ function snakeAILoop(game){
                 
                 // Have I obstacles front of me?
                 if (obstacleFlag) {
-                    //debugger;
                     if(obstacles.axiX.length > 0) {
-                        nextObstacle = obstacles.axiX.find(function (obstacle) { return obstacle.x >= myHead.x ;});
+                        nextObstacleX = obstacles.axiX.find(function (obstacle) { return obstacle.x >= myHead.x ;});
                         // I will hint
-                        if (nextObstacle && nextObstacle.x == myHead.x + 1) {
+                        if (nextObstacleX && myHead.x + 1 == nextObstacleX.x ) {
                             if (myHead.y >= self.memory.middleScreen.y ) {
-                                this.direction = "S";
-                            } else {
                                 this.direction = "N";
+                            } else {
+                                this.direction = "S";
                             }
                         }
                     }
@@ -271,9 +290,8 @@ function snakeAILoop(game){
 
                 // I have foods in my way
                 if ( foodFlag ) {
-                    //debugger;
                     if (foods.axiX.length > 0) {
-                        nextFoodX = foods.axiX.find(function (food) { return food.y == myHead.y; });
+                        nextFoodX = foods.axiX.find(function (food) { return myHead.x <= food.x; });
                     }
 
                     if (foods.axiY.length > 0) {
@@ -303,9 +321,9 @@ function snakeAILoop(game){
                             this.direction = "N";
                         }
 
-                        if (nextObstacle) {
+                        if (nextObstacleX) {
                             var d1 = getDistanceOf2Points(myHead.x, myHead.y, nextFood.x, nextFood.y);
-                            var d2 = getDistanceOf2Points(myHead.x, myHead.y, nextObstacle.x, nextObstacle.y);
+                            var d2 = getDistanceOf2Points(myHead.x, myHead.y, nextObstacleX.x, nextObstacleX.y);
 
                             if (d2 < d1) {
                                 if (myHead.y >= self.memory.middleScreen.y ) {
@@ -316,6 +334,10 @@ function snakeAILoop(game){
                             }
                         }
                     }
+
+                    if(this.direction != "E" && obstacles.axiY.length > 0) {
+                        this.direction = getDirectionAvoidingObstacle(this.direction, obstacles, myHead, nextFood, this.memory.borders);
+                    }
                     
                 }
                 break;
@@ -325,9 +347,9 @@ function snakeAILoop(game){
                 // Have I obstacles front of me?
                 if (obstacleFlag) {
                     if(obstacles.axiY.length > 0) {
-                        nextObstacle = obstacles.axiY.find(function (obstacle) { return obstacle.y >= myHead.y; });
+                        nextObstacleY = obstacles.axiY.find(function (obstacle) { return obstacle.y >= myHead.y; });
                         // I will hint
-                        if (nextObstacle && nextObstacle.y == myHead.y + 1) {
+                        if (nextObstacleY && myHead.y + 1 == nextObstacleY.y ) {
                             if (myHead.x >= self.memory.middleScreen.x ) {
                                 this.direction = "W";
                             } else {
@@ -339,13 +361,12 @@ function snakeAILoop(game){
 
                 // I have foods in my way
                 if ( foodFlag ) {
-                    //debugger;
                     if (foods.axiX.length > 0) {
                         nextFoodX = foods.axiX.find(function (food) { return food.y == myHead.y; });
                     }
 
                     if (foods.axiY.length > 0) {
-                        nextFoodY = foods.axiY.find(function (food) { return food.x == myHead.x; });
+                        nextFoodY = foods.axiY.find(function (food) { return myHead.y <= food.y; });
                     }
 
                     if (nextFoodX && nextFoodY) {
@@ -371,9 +392,9 @@ function snakeAILoop(game){
                             this.direction = "W";
                         }
 
-                        if (nextObstacle) {
+                        if (nextObstacleY) {
                             var d1 = getDistanceOf2Points(myHead.x, myHead.y, nextFood.x, nextFood.y);
-                            var d2 = getDistanceOf2Points(myHead.x, myHead.y, nextObstacle.x, nextObstacle.y);
+                            var d2 = getDistanceOf2Points(myHead.x, myHead.y, nextObstacleY.x, nextObstacleY.y);
 
                             if (d2 < d1) {
                                 if (myHead.x >= self.memory.middleScreen.x ) {
@@ -384,6 +405,10 @@ function snakeAILoop(game){
                             }
                         }
                     }
+
+                    if(this.direction != "S" && obstacles.axiX.length > 0) {
+                        this.direction = getDirectionAvoidingObstacle(this.direction, obstacles, myHead, nextFood, this.memory.borders);
+                    }
                 }
         
                 break;
@@ -391,11 +416,10 @@ function snakeAILoop(game){
             case 'W':
                 // Have I obstacles front of me?
                 if (obstacleFlag) {
-                    //debugger;
                     if(obstacles.axiX.length > 0) {
-                        nextObstacle = obstacles.axiX.find(function (obstacle) { return obstacle.x <= myHead.x ;});
+                        nextObstacleX = obstacles.axiX.find(function (obstacle) { return obstacle.x <= myHead.x ;});
                         // I will hint
-                        if (nextObstacle && nextObstacle.x == myHead.x - 1) {
+                        if (nextObstacleX && myHead.x - 1 == nextObstacleX.x ) {
                             if (myHead.y >= self.memory.middleScreen.y ) {
                                 this.direction = "N";
                             } else {
@@ -408,9 +432,8 @@ function snakeAILoop(game){
 
                 // I have foods in my way
                 if ( foodFlag ) {
-                    //debugger;
                     if (foods.axiX.length > 0) {
-                        nextFoodX = foods.axiX.find(function (food) { return food.y == myHead.y ;});
+                        nextFoodX = foods.axiX.find(function (food) { return myHead.x >= food.x;});
                     }
 
                     if (foods.axiY.length > 0) {
@@ -440,9 +463,9 @@ function snakeAILoop(game){
                             this.direction = "N";
                         }
 
-                        if (nextObstacle) {
+                        if (nextObstacleX) {
                             var d1 = getDistanceOf2Points(myHead.x, myHead.y, nextFood.x, nextFood.y);
-                            var d2 = getDistanceOf2Points(myHead.x, myHead.y, nextObstacle.x, nextObstacle.y);
+                            var d2 = getDistanceOf2Points(myHead.x, myHead.y, nextObstacleX.x, nextObstacleX.y);
 
                             if (d2 < d1) {
                                 if (myHead.y >= self.memory.middleScreen.y ) {
@@ -453,12 +476,13 @@ function snakeAILoop(game){
                             }
                         }
                     }
-                    
+
+                    if(this.direction != "W" && obstacles.axiY.length > 0) {
+                        this.direction = getDirectionAvoidingObstacle(this.direction, obstacles, myHead, nextFood, this.memory.borders);
+                    }
                 }
                 break;
         }
-
-        
         return this.direction;
     };
     
